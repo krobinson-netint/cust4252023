@@ -20,10 +20,10 @@ def getcmd(index):
 
     cmd=("ffmpeg -y -c:v h264_ni_quadra_dec  -xcoder-params out=hw -i %s "
         " -filter_complex '[0:v]ni_quadra_split=4[out1][in2][in3][in4];[in2]ni_quadra_scale=1280:720[out2];[in3]ni_quadra_scale=854:480[out3];[in4]ni_quadra_scale=640:360[out4]'"
-        " -map '[out1]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 3000000 %s "
-        " -map '[out2]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 2000000 %s "
-        " -map '[out3]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 1000000 %s "
-        " -map '[out4]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 500000 %s " %(args.file, output1, output2, output3, output4) )
+        " -map '[out1]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1 -b:v 3000000 %s "
+        " -map '[out2]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1 -b:v 2000000 %s "
+        " -map '[out3]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1 -b:v 1000000 %s "
+        " -map '[out4]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1 -b:v 500000 %s " %(args.file, output1, output2, output3, output4) )
 
 
     # Add the output portion of the command
