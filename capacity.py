@@ -54,6 +54,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     instances = args.instances
+    
 
     processes = [Process(target=launchCmd, args=(i,)) for i in  range(instances)]
 
