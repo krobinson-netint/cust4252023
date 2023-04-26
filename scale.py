@@ -6,7 +6,6 @@ import numpy as np
 
 def getcmd(index):
     
-    scalenum = ["0","1","2","3","4"]
     output1 = " /tmp/ramdisk/" + str(index) + "-1080p.mp4"
     output2 = " /tmp/ramdisk/" + str(index) + "-720p.mp4"
     output3 = " /tmp/ramdisk/" + str(index) + "-480p.mp4"
