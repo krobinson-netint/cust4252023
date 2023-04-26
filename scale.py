@@ -12,7 +12,6 @@ def getcmd(index):
     output3 = " /tmp/ramdisk/" + str(index) + "-480p.mp4"
     output4 = " /tmp/ramdisk/" + str(index) + "-360p.mp4"
 
-    #cmd=("test %s " %( output1 ))
     # cmd=("ffmpeg -y -c:v h264_ni_quadra_dec -dec -1 -xcoder-params out=hw -i %s "
     #     " -filter_complex '[0:v]ni_quadra_split=4[out1][in2][in3][in4];[in2]ni_quadra_scale=1280:720[out2];[in3]ni_quadra_scale=854:480[out3];[in4]ni_quadra_scale=640:360[out4]'"
     #     " -map '[out1]' -c:v h265_ni_quadra_enc -enc -1 -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 3000000 %s "
@@ -43,6 +42,7 @@ def launchCmd(index):
 
 def printresults():
     print("\n=============== Printing Results =====================\n")
+    error = 0
     ignore = 1
     for index in range(instances):
         resultsfilename = resultsfile(index)
@@ -60,6 +60,8 @@ def printresults():
             print("Instance %s had an average FPS of %s with a reported FFmpeg speed of %s " %(index, fps_results_avg, speed))
         else:
             print("Instance %s no data " %(index))
+            error += 1
+    print ("error %s" %(str(error)))
 
 
 
