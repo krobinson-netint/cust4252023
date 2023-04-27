@@ -13,10 +13,10 @@ def getcmd(index):
 
     cmd=("ffmpeg -y -c:v h264_ni_quadra_dec -xcoder-params out=hw:semiplanar0=1:enableOut1=1:semiplanar1=1:scale1=1280x720:enableOut2=1:semiplanar2=1:scale2=960x540 -i %s "
         "-filter_complex '[0:v]ni_quadra_split=1:1:2[1080p][720p][540p][540p_1];[540p_1]ni_quadra_scale=640x360[360p]' "
-        "-map [1080p] -xcoder-params RcEnable=1 -b:v 3500000 -c:v h265_ni_quadra_enc  %s "
-        "-map [720p] -xcoder-params RcEnable=1 -b:v 1000000 -c:v h265_ni_quadra_enc  %s "
-        "-map [540p] -xcoder-params RcEnable=1 -b:v 800000 -c:v h265_ni_quadra_enc  %s "
-        "-map [360p] -xcoder-params RcEnable=1 -b:v 500000 -c:v h265_ni_quadra_enc  %s " %(args.file, output1, output2, output3, output4) )
+        "-map [1080p] -xcoder-params RcEnable=1 -b:v 3500000 -c:v h265_ni_quadra_enc -c:a copy %s "
+        "-map [720p] -xcoder-params RcEnable=1 -b:v 1000000 -c:v h265_ni_quadra_enc -c:a copy %s "
+        "-map [540p] -xcoder-params RcEnable=1 -b:v 800000 -c:v h265_ni_quadra_enc -c:a copy %s "
+        "-map [360p] -xcoder-params RcEnable=1 -b:v 500000 -c:v h265_ni_quadra_enc -c:a copy %s " %(args.file, output1, output2, output3, output4) )
 
     # Add the output portion of the command
     cmd = cmd + " > " +  resultsfile(index) + " 2>&1 < /dev/null "
