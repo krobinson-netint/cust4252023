@@ -5,7 +5,7 @@ import argparse, re
 import numpy as np
 
 def getcmd(index):
-    cmd=("ffmpeg -y -c:v h264_ni_quadra_dec -xcoder-params 'out=hw' -i %s -enc -1 -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 5000000 -c:a copy" %(args.file))
+    cmd=("ffmpeg -y -c:v h264_ni_quadra_dec -xcoder-params 'out=hw' -i %s -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1 -b:v 5000000 -c:a copy" %(args.file))
 
     # Add the output portion of the command
     cmd = cmd + outputfile(index) + " > " +  resultsfile(index) + " 2>&1 < /dev/null "
@@ -16,7 +16,7 @@ def outputfile(index):
     return " /tmp/ramdisk/" + args.output[:pos] + str(index) + args.output[pos:]
 
 def resultsfile(index):
-    return "/dev/shm/resultslog-" + str(index)
+    return "/dev/shm/ffmpeglog-" + str(index)
 
 def launchCmd(index):
     cmd=getcmd(index)
@@ -36,12 +36,12 @@ def printresults():
                     fps = line.partition("fps=")[2][0:3]                    # looks for 'fps=' and returns only the value and stips everything before and after
                     fps_results = np.append(fps_results,int(float(fps)))    # puts the value into an array, converts the string->float->integer
 
-        fps_results_avg = int(np.mean(fps_results[ignore:]))
-        speed = lastline.partition("speed=")[2][0:5]
-        print("Instance %s had an average FPS of %s with a reported FFmpeg speed of %s " %(index, fps_results_avg, speed))
-
-
-
+        if len(fps_results) > ignore:
+            fps_results_avg = int(np.mean(fps_results[ignore:]))
+            speed = lastline.partition("speed=")[2][0:5]
+            print("Instance %s had an average FPS of %s with a reported FFmpeg speed of %s " %(index, fps_results_avg, speed))
+        else:
+            print("Instance %s no FPS data found " %(index))
     return
 
 if __name__ == "__main__":
@@ -54,7 +54,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     instances = args.instances
-    
 
     processes = [Process(target=launchCmd, args=(i,)) for i in  range(instances)]
 

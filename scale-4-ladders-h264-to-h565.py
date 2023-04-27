@@ -49,9 +49,7 @@ def printresults():
             speed = lastline.partition("speed=")[2][0:5]
             print("Instance %s had an average FPS of %s with a reported FFmpeg speed of %s " %(index, fps_results_avg, speed))
         else:
-            print("Instance %s no data " %(index))
-            error += 1
-    print ("error %s" %(str(error)))
+            print("Instance %s no FPS data found " %(index))
     return
 
 if __name__ == "__main__":
