@@ -6,38 +6,29 @@ import numpy as np
 
 def getcmd(index):
     
-    output1 = " /tmp/ramdisk/" + str(index) + "-1080p.mp4"
-    output2 = " /tmp/ramdisk/" + str(index) + "-720p.mp4"
-    output3 = " /tmp/ramdisk/" + str(index) + "-480p.mp4"
-    output4 = " /tmp/ramdisk/" + str(index) + "-360p.mp4"
+    output1 = "/tmp/ramdisk/" + str(index) + "-1080p.mp4"
+    output2 = "/tmp/ramdisk/" + str(index) + "-720p.mp4"
+    output3 = "/tmp/ramdisk/" + str(index) + "-480p.mp4"
+    output4 = "/tmp/ramdisk/" + str(index) + "-360p.mp4"
 
-    # cmd=("ffmpeg -y -c:v h264_ni_quadra_dec -dec -1 -xcoder-params out=hw -i %s "
-    #     " -filter_complex '[0:v]ni_quadra_split=4[out1][in2][in3][in4];[in2]ni_quadra_scale=1280:720[out2];[in3]ni_quadra_scale=854:480[out3];[in4]ni_quadra_scale=640:360[out4]'"
-    #     " -map '[out1]' -c:v h265_ni_quadra_enc -enc -1 -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 3000000 %s "
-    #     " -map '[out2]' -c:v h265_ni_quadra_enc -enc -1 -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 2000000 %s "
-    #     " -map '[out3]' -c:v h265_ni_quadra_enc -enc -1 -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 1000000 %s "
-    #     " -map '[out4]' -c:v h265_ni_quadra_enc -enc -1 -xcoder-params RcEnable=1:RcInitDelay=2000 -b:v 500000 %s " %(args.file, output1, output2, output3, output4) )
-
-    cmd=("ffmpeg -y -c:v h264_ni_quadra_dec  -xcoder-params out=hw -i %s "
-        " -filter_complex '[0:v]ni_quadra_split=4[out1][in2][in3][in4];[in2]ni_quadra_scale=1280:720[out2];[in3]ni_quadra_scale=854:480[out3];[in4]ni_quadra_scale=640:360[out4]'"
-        " -map '[out1]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1 -b:v 3000000 %s "
-        " -map '[out2]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1 -b:v 2000000 %s "
-        " -map '[out3]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1 -b:v 1000000 %s "
-        " -map '[out4]' -c:v h265_ni_quadra_enc -xcoder-params RcEnable=1 -b:v 500000 %s " %(args.file, output1, output2, output3, output4) )
-
+    cmd=("ffmpeg -y -c:v h264_ni_quadra_dec -xcoder-params out=hw:semiplanar0=1:enableOut1=1:semiplanar1=1:scale1=1280x720:enableOut2=1:semiplanar2=1:scale2=960x540 -i %s "
+        "-filter_complex '[0:v]ni_quadra_split=1:1:2[1080p][720p][540p][540p_1];[540p_1]ni_quadra_scale=640x360[360p]' "
+        "-map [1080p] -xcoder-params RcEnable=1 -b:v 3500000 -c:v h265_ni_quadra_enc  %s "
+        "-map [720p] -xcoder-params RcEnable=1 -b:v 1000000 -c:v h265_ni_quadra_enc  %s "
+        "-map [540p] -xcoder-params RcEnable=1 -b:v 800000 -c:v h265_ni_quadra_enc  %s "
+        "-map [360p] -xcoder-params RcEnable=1 -b:v 500000 -c:v h265_ni_quadra_enc  %s " %(args.file, output1, output2, output3, output4) )
 
     # Add the output portion of the command
     cmd = cmd + " > " +  resultsfile(index) + " 2>&1 < /dev/null "
     return cmd
 
 def resultsfile(index):
-    return "/dev/shm/resultslog-" + str(index)
+    return "/dev/shm/ffmpeglog-" + str(index)
 
 def launchCmd(index):
     cmd=getcmd(index)
     if args.dry is True:
         getstatusoutput(cmd)
-
 
 def printresults():
     print("\n=============== Printing Results =====================\n")
@@ -61,16 +52,12 @@ def printresults():
             print("Instance %s no data " %(index))
             error += 1
     print ("error %s" %(str(error)))
-
-
-
     return
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--instances", help="How many instances are to be executed", default=1, type=int)
     parser.add_argument("-f", "--file", help="Source File", default="/tmp/ramdisk/scale.mp4", type=str)
-    parser.add_argument("-o", "--output", help="Output format, defaults to filename<instances>.mp4", default="output.mp4", type=str)
     parser.add_argument("--dry", help="do not run the ffmpeg command", action="store_false")
 
     args = parser.parse_args()
