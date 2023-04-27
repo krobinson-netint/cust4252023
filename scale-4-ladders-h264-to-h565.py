@@ -8,7 +8,7 @@ def getcmd(index):
     
     output1 = "/tmp/ramdisk/" + str(index) + "-1080p.mp4"
     output2 = "/tmp/ramdisk/" + str(index) + "-720p.mp4"
-    output3 = "/tmp/ramdisk/" + str(index) + "-480p.mp4"
+    output3 = "/tmp/ramdisk/" + str(index) + "-540p.mp4"
     output4 = "/tmp/ramdisk/" + str(index) + "-360p.mp4"
 
     cmd=("ffmpeg -y -c:v h264_ni_quadra_dec -xcoder-params out=hw:semiplanar0=1:enableOut1=1:semiplanar1=1:scale1=1280x720:enableOut2=1:semiplanar2=1:scale2=960x540 -i %s "
